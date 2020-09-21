@@ -9,6 +9,8 @@ travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f","
 version = "Smugglarn v0.0.1"
 
 def send_requests_per_path(base, path, enp, header, proxy):
+    if path[0] != "/":
+        path = "/" + path
     path_comp = path.split('/')[1:]
     if proxy != '':
         manager=requests.urllib3.ProxyManager(proxy)
@@ -50,7 +52,10 @@ def main(argv):
         if opt == '-h':
             print_help()
         elif opt == '-u':
-            baseurl = arg
+            if arg[-1] != '/':
+                baseurl = arg + '/'
+            else:
+                baseurl = arg
         elif opt == '-p':
             paths_file = arg
             if not os.path.exists(paths_file):
