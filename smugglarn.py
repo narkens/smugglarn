@@ -5,7 +5,8 @@ import getopt
 import os.path
 import re
 
-travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f"]
+travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f","..;/"]
+version = "Smugglarn v0.0.1"
 
 def send_requests_per_path(base, path, enp, header, proxy):
     path_comp = path.split('/')[1:]
@@ -41,7 +42,7 @@ def main(argv):
     headers = {}
     proxy = ''
     try:
-        opts, args = getopt.getopt(argv,"hu:p:e:H:x:")
+        opts, args = getopt.getopt(argv,"hu:p:e:H:x:v")
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
@@ -65,6 +66,9 @@ def main(argv):
             headers[s.group(1)]=s.group(2)
         elif opt == '-x':
             proxy = arg
+        elif opt == '-v':
+            print(version)
+
 
     if baseurl == '' or paths_file == '':
         print_help()
