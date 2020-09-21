@@ -1,5 +1,9 @@
 #!/usr/bin/python3
-import requests, sys, getopt, os.path, re
+import requests
+import sys
+import getopt
+import os.path
+import re
 
 travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f"]
 
