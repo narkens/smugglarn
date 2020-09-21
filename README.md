@@ -26,4 +26,7 @@ documentation.
 -x <proxy>      : proxy to use in curl syntax (buggy)
 -X <req_method> : request method (currently only GET and POST)
 -b <body>       : body to POST if post is used as method
+-a              : basic analysis comparing response code and length (not only 200:s)
+-v              : version information
+-h              : print somewhat of a help
 ```
