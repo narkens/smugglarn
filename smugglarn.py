@@ -6,7 +6,7 @@ import os.path
 import re
 
 travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f","..;/"]
-version = "Smugglarn v0.0.1"
+version = "Smugglarn v0.0.2"
 
 def send_requests_per_path(base, path, enp, header, proxy, req_method, body):
     if path[0] != "/":
