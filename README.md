@@ -12,7 +12,10 @@ the path-list, using simple path traversals, i.e. if the path is /squibbly/squib
 
 If a known backend endpoint is known, this can be specified using the -e flag,
 for example -e /super/secret/path will instead of requesting the path in the
-paths file look for URLs like /squibbly/squib/../../super/secret/path.
+paths file look for paths like /squibbly/squib/../../super/secret/path.
+
+Currently only support GET requests has limited proxy functionality and terrible
+documentation.
 
 ## Usage
 ```
