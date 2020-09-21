@@ -6,7 +6,7 @@ import os.path
 import re
 
 travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f","..;/"]
-version = "Smugglarn v0.0.2"
+version = "Smugglarn v0.0.3"
 
 def analyze_current_response(o_res_code, o_res_len, cur_res_code, cur_res_len, url):
     if o_res_code == cur_res_code and (cur_res_len < o_res_len + 20) and (cur_res_len > o_res_len - 20):
