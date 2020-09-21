@@ -15,8 +15,10 @@ for example -e /super/secret/path will instead of requesting the path in the
 paths file look for URLs like /squibbly/squib/../../super/secret/path.
 
 ## Usage
+´´´
 -u <base_url>   : specify the base URL of the target
 -p <paths_file> : specify the file in which you have your paths
 -e <endpoint>   : super special endpoint you like to grab
 -H <header>     : headers in curl-syntax
 -x <proxy>      : proxy to use in curl syntax (buggy)
+´´´
