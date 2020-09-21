@@ -5,8 +5,8 @@ travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f"]
 
 def send_requests_per_path(base, path, enp):
     path_comp = path.split('/')[1:]
-    org_req = requests.get(base+path[1:])
-    org_resp_code = org_req.status_code
+    org_req = requests.urllib3.PoolManager().request("GET",base+path[1:])
+    org_resp_code = org_req.status
 
     for inj_point in range(len(path_comp)):
         for trav in travenc:
@@ -18,9 +18,9 @@ def send_requests_per_path(base, path, enp):
                 probe = enp[1:]
             
             url=base+'/'.join(path_comp[:inj_point+1])+'/'+traversal+probe
-            r = requests.get(url)
-            if r.status_code == 200:
-                print(str(r.status_code) + ": " + url)
+            r = requests.urllib3.PoolManager().request("GET",url)
+            if r.status == 200:
+                print(str(r.status) + ": " + url)
 
 def print_help():
     help_text = '''Usage: smugglarn.py -u <base_url> -p <paths_file> [-e <probing_endpoint>]'''
