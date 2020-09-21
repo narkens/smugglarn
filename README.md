@@ -24,4 +24,6 @@ documentation.
 -e <endpoint>   : super special endpoint you like to grab
 -H <header>     : headers in curl-syntax
 -x <proxy>      : proxy to use in curl syntax (buggy)
+-X <req_method> : request method (currently only GET and POST)
+-b <body>       : body to POST if post is used as method
 ```
