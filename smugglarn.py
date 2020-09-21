@@ -27,7 +27,7 @@ def send_requests_per_path(base, path, enp, header, proxy):
                 print(str(r.status) + ": " + url)
 
 def print_help():
-    help_text = '''Usage: smugglarn.py -u <base_url> -p <paths_file> [-e <probing_endpoint>, -H <header(s)>]'''
+    help_text = '''Usage: smugglarn.py -u <base_url> -p <paths_file> [-e <probing_endpoint>, -H <header(s)>, -x <proxy_server>]'''
     print(help_text)
 
 def main(argv):
