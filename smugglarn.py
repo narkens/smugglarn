@@ -15,6 +15,9 @@ def analyze_current_response(o_res_code, o_res_len, cur_res_code, cur_res_len, u
 def send_requests_per_path(base, path, enp, header, proxy, req_method, body, analyze):
     if path[0] != "/":
         path = "/" + path
+    if enp != '':
+        path = path.split('?')[0]
+        path = path.split('#')[0]
     path_comp = path.split('/')[1:]
     if proxy != '':
         manager=requests.urllib3.ProxyManager(proxy)
