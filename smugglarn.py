@@ -6,7 +6,7 @@ import os.path
 import re
 
 travenc = ["../", "%2e./", ".%2e/", "%2e.%2f", ".%2e%2f", "..%2f", "%2e%2e%2f","..;/"]
-version = "Smugglarn v0.0.3"
+version = "Smugglarn v0.0.4"
 
 def analyze_current_response(o_res_code, o_res_len, cur_res_code, cur_res_len, url):
     if o_res_code == cur_res_code and (cur_res_len < o_res_len + 20) and (cur_res_len > o_res_len - 20):
@@ -43,7 +43,7 @@ def send_requests_per_path(base, path, enp, header, proxy, req_method, body, ana
                 analyze_current_response(org_resp_code, len(org_req.data), r.status, len(r.data), url)
 
 def print_help():
-    help_text = '''Usage: smugglarn.py -u <base_url> -p <paths_file> [-e <probing_endpoint>, -H <header(s)>, -x <proxy_server>, -X <request_method>, -a]'''
+    help_text = '''Usage: smugglarn.py -u <base_url> -p <paths_file> [-e <probing_endpoint>, -H <header(s)>, -x <proxy_server>, -X <request_method>, -a, -b <POST_body>]'''
     print(help_text)
 
 def main(argv):
@@ -95,18 +95,26 @@ def main(argv):
             req_body = arg
         elif opt == "-a":
             analyze_response = True
-
-
-    if baseurl == '' or paths_file == '':
+    
+    use_stdin = False
+    if not sys.stdin.isatty():
+        use_stdin = True
+    if baseurl == '':
+        print_help()
+        sys.exit(2)
+    if paths_file == '' and not use_stdin:
         print_help()
         sys.exit(2)
     if req_method == "POST" and req_body == '':
         print("Forgetting a body?")
         sys.exit(2)
-
-    pf = open(paths_file)
-    for line in pf:
-        send_requests_per_path(baseurl, line[:-1], endpoint, headers, proxy, req_method, req_body, analyze_response)
+    if use_stdin:
+        for line in sys.stdin:
+            send_requests_per_path(baseurl, line[:-1], endpoint, headers, proxy, req_method, req_body, analyze_response)
+    else:
+        pf = open(paths_file)
+        for line in pf:
+            send_requests_per_path(baseurl, line[:-1], endpoint, headers, proxy, req_method, req_body, analyze_response)
     
 
 if __name__ == "__main__":
